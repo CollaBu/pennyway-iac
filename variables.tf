@@ -26,6 +26,14 @@ variable "env_name_dev" {
   default = "dev"
 }
 
-variable "vpc_cidr_block" {
-  default = "10.42.0.0/16"
+variable "cidr_block" {
+  type = string
+}
+
+variable "remote_ip" {
+  type = string
+}
+
+variable "keypair" {
+  type = string
 }
