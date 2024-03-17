@@ -1,0 +1,16 @@
+### Convetional commit-lint ###
+/node_modules
+
+### Terraform ###
+/.terraform
+.terraform.*
+/terraform.tfstate
+/terraform.tfstate.*
+/terraform.tfvars
+
+
+### SSH Key ### 
+*.pem
+
+### OVPN File ###
+*.ovpn
