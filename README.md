@@ -16,16 +16,15 @@ pennyway-iac/
 │   │   ├── variables.tf
 │   │   └── outputs.tf
 │   └── compute/
-│       ├── main.tf
-│       ├── variables.tf
-│       └── outputs.tf
-├── environments/
-│   ├── dev/
-│   │   ├── main.tf
-│   │   ├── terraform.tfvars
-│   │   └── outputs.tf
+│       ├── bastion
+│       │   ├── main.tf
+│       │   └── variables.tf
+│       └── was
+│           ├── main.tf
+│           └── variables.tf
+├── main.tf
+├── terraform.tfvars
 └── configurations/
-    ├── backend.tf
     └── provider.tf
 ```
 

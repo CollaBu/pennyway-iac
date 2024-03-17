@@ -7,7 +7,7 @@ resource "aws_security_group" "was" {
   }
 }
 
-# was 서버는 bastion을 통ㅈ해서만 접근할 수 있음
+# was 서버는 bastion을 통해서만 접근할 수 있음
 resource "aws_security_group_rule" "bastion" {
   type              = "ingress"
   from_port         = 0
