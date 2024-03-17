@@ -48,7 +48,7 @@ resource "aws_route_table" "net" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
-    Name = "Public rtb"
+    Name = "${var.region_name}-${var.terraform_name}-${var.env_name}-net-rtb"
   }
 }
 
@@ -61,4 +61,16 @@ resource "aws_route" "net" {
 resource "aws_route_table_association" "net" {
   subnet_id      = aws_subnet.net.id
   route_table_id = aws_route_table.net.id
+}
+
+resource "aws_route_table" "app" {
+  vpc_id = aws_vpc.vpc.id
+  tags = {
+    Name = "${var.region_name}-${var.terraform_name}-${var.env_name}-app-rtb"
+  }
+}
+
+resource "aws_route_table_association" "app" {
+  subnet_id      = aws_subnet.app.id
+  route_table_id = aws_route_table.app.id
 }

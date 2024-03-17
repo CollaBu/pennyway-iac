@@ -13,3 +13,7 @@ output "subnet_app_id" {
 output "subnet_data_id" {
   value = aws_subnet.app.id
 }
+
+output "igw_id" {
+  value = aws_internet_gateway.igw.id
+}
