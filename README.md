@@ -2,6 +2,10 @@
 
 ## 📌 Architecture
 
+### ☁️ Cloud Architecture
+
+![image](https://gist.github.com/assets/68031450/da034019-5cbd-4f1a-b3ae-6baaeb0b771a)
+
 ### 🗂️ Directory Architecture
 
 ```plain
