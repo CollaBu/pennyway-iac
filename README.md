@@ -34,3 +34,21 @@ pennyway-iac/
 - `Configurations Directory`
   - Terraform 초기화 및 실행에 필요한 설정 파일을 보관
   - 백엔드 설정, 프로바이더 설정 등을 포함할 수 있습니다.
+
+## Setting
+
+### terraform.trvars
+
+```plain
+access_key = ""
+secret_key = ""
+cidr_block = ""
+remote_ip = ""
+keypair = ""
+```
+
+- `access_key`: AWS 계정의 액세스 키 ID
+- `secret_key`: AWS 계정의 시크릿 액세스 키 ID
+- `cidr_block`: Private Network 환경을 구축하기 위해 사용되는 IP 주소 범위
+- `remote_ip`: bastion 서버에 접속하기 위해 사용되는 IP 주소
+- `keypair`: AWS EC2 인스턴스에 SSH 접속을 위해 사용되는 키 쌍
