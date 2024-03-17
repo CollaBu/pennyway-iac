@@ -1,3 +1,4 @@
+# bastion 서버의 security-group 정의
 resource "aws_security_group" "bastion" {
   vpc_id = var.vpc_id
   tags = {
@@ -5,6 +6,7 @@ resource "aws_security_group" "bastion" {
   }
 }
 
+# bastion 서버에 remote_ip의 SSH 접근 허용
 resource "aws_security_group_rule" "remote_admin" {
   type              = "ingress"
   from_port         = 22
@@ -14,6 +16,7 @@ resource "aws_security_group_rule" "remote_admin" {
   security_group_id = aws_security_group.bastion.id
 }
 
+# bastion 서버에서 ovpn을 사용
 resource "aws_security_group_rule" "ovpn" {
   type              = "ingress"
   from_port         = 1194
@@ -23,15 +26,17 @@ resource "aws_security_group_rule" "ovpn" {
   security_group_id = aws_security_group.bastion.id
 }
 
+# bastion 서버에서 net 서브넷에서 오는 접근 허용
 resource "aws_security_group_rule" "vpc-inbound" {
   type              = "ingress"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = [cidrsubnet(var.vpc_cidr_block, 8, 0)]
+  cidr_blocks       = [cidrsubnet(var.cidr_block, 8, 0)]
   security_group_id = aws_security_group.bastion.id
 }
 
+# bastion 서버의 모든 outbound 허용
 resource "aws_security_group_rule" "outbound" {
   type              = "egress"
   from_port         = 0
@@ -41,6 +46,7 @@ resource "aws_security_group_rule" "outbound" {
   security_group_id = aws_security_group.bastion.id
 }
 
+# AWS AMI 이미지 데이터 검색
 data "aws_ami" "fck-nat-amzn2" {
   most_recent = true
 
@@ -57,6 +63,7 @@ data "aws_ami" "fck-nat-amzn2" {
   owners = ["099720109477"]
 }
 
+# bastion 서버(EC2) 생성
 resource "aws_instance" "bastion" {
   ami                         = data.aws_ami.fck-nat-amzn2.id
   instance_type               = "t2.micro"
