@@ -7,3 +7,10 @@
 /terraform.tfstate
 /terraform.tfstate.*
 /terraform.tfvars
+
+
+### SSH Key ### 
+*.pem
+
+### OVPN File ###
+*.ovpn
