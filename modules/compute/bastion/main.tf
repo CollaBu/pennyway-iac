@@ -22,7 +22,7 @@ resource "aws_security_group_rule" "ovpn" {
   from_port         = 1194
   to_port           = 1194
   protocol          = "udp"
-  cidr_blocks       = [var.remote_ip]
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.bastion.id
 }
 
