@@ -49,29 +49,24 @@ resource "aws_security_group_rule" "outbound" {
 # AWS AMI 이미지 데이터 검색
 data "aws_ami" "fck-nat-amzn2" {
   most_recent = true
-
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    values = ["fck-nat-amzn2-hvm-1.1.0*-x86_64-ebs"]
   }
-
   filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+    name   = "owner-id"
+    values = ["568608671756"]
   }
-
-  owners = ["099720109477"]
 }
 
 # bastion 서버(EC2) 생성
 resource "aws_instance" "bastion" {
-  ami                         = data.aws_ami.fck-nat-amzn2.id
-  instance_type               = "t2.micro"
-  subnet_id                   = var.subnet_id
-  vpc_security_group_ids      = [aws_security_group.bastion.id]
-  associate_public_ip_address = true
-  source_dest_check           = false
-  key_name                    = var.keypair
+  ami                    = data.aws_ami.fck-nat-amzn2.id
+  instance_type          = "t2.micro"
+  subnet_id              = var.subnet_id
+  vpc_security_group_ids = [aws_security_group.bastion.id]
+  source_dest_check      = false
+  key_name               = var.keypair
 
   root_block_device {
     volume_size = "8"
@@ -82,3 +77,10 @@ resource "aws_instance" "bastion" {
     Name = "${var.region_name}-${var.terraform_name}-${var.env_name}-bastion"
   }
 }
+
+resource "aws_eip" "nat_eip" {
+  domain = "vpc"
+
+  instance = aws_instance.bastion.id
+}
+
