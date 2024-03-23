@@ -114,12 +114,32 @@ resource "aws_security_group" "bastion_sg" {
 }
 
 # bastion 서버에서 net 서브넷에서 오는 접근 허용
-resource "aws_security_group_rule" "bastion_inbound" {
+resource "aws_security_group_rule" "bastion_inbound_ssh" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = [var.remote_ip]
+  security_group_id = aws_security_group.bastion_sg.id
+}
+
+# bastion 서버에서 vpn 접근 허용
+resource "aws_security_group_rule" "ovpn" {
+  type              = "ingress"
+  from_port         = 1194
+  to_port           = 1194
+  protocol          = "udp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.bastion_sg.id
+}
+
+# bastion 서버에서 net 서브넷에서 오는 접근 허용
+resource "aws_security_group_rule" "vpc-inbound" {
   type              = "ingress"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = [cidrsubnet(var.cidr_block, 8, 0)]
   security_group_id = aws_security_group.bastion_sg.id
 }
 
@@ -133,9 +153,26 @@ resource "aws_security_group_rule" "bastion_outbound" {
   security_group_id = aws_security_group.bastion_sg.id
 }
 
+# AWS AMI 이미지 데이터 검색
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"]
+}
+
 # bastion 서버(EC2) 생성
 resource "aws_instance" "bastion" {
-  ami                         = "ami-09a7535106fbd42d5"
+  ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.net.id
   vpc_security_group_ids      = [aws_security_group.bastion_sg.id]
