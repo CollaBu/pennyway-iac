@@ -18,27 +18,22 @@ variable "env_name" {
   type = string
 }
 
-# bastion에 접근 가능한 ip
-variable "remote_ip" {
-  type = string
-}
-
-# bastion에 접근하기 위해 사용되는 키 쌍
+# was에 접근하기 위해 사용되는 키 쌍
 variable "keypair" {
   type = string
 }
 
-# bastion 리소스가 속한 vpc의 id
+# was 리소스가 속한 vpc의 id
 variable "vpc_id" {
   type = string
 }
 
-# bastion 리소스가 속한 subnet의 id
+# was 리소스가 속한 subnet의 id
 variable "subnet_id" {
   type = string
 }
 
-# bastion 리소스가 속한 vpc의 internet_gateway의 id
-variable "igw_id" {
+# ec2 인스턴스명
+variable "name" {
   type = string
 }
