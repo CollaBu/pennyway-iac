@@ -17,3 +17,13 @@ variable "terraform_name" {
 variable "env_name" {
   type = string
 }
+
+# bastion에 접근하기 위해 사용되는 키 쌍
+variable "keypair" {
+  type = string
+}
+
+# bastion에 접근 가능한 ip
+variable "remote_ip" {
+  type = string
+}
