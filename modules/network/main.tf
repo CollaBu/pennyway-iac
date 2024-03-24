@@ -20,13 +20,13 @@ resource "aws_internet_gateway" "igw" {
 }
 
 # NAT Gateway에 할당할 IP
-resource "aws_eip" "ngw" {
+resource "aws_eip" "ngw_ip" {
   domain = "vpc"
 }
 
 # NAT Gateway 선언
-resource "aws_nat_gateway" "nat_gateway" {
-  allocation_id = aws_eip.ngw.id
+resource "aws_nat_gateway" "ngw" {
+  allocation_id = aws_eip.ngw_ip.id
   subnet_id     = aws_subnet.net.id
 }
 
@@ -95,7 +95,7 @@ resource "aws_route_table" "app" {
 resource "aws_route" "outbound_nat_route" {
   route_table_id         = aws_route_table.app.id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.nat_gateway.id
+  nat_gateway_id         = aws_nat_gateway.ngw.id
 }
 
 # app subnet과 route_table을 연결
