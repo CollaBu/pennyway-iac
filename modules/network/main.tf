@@ -133,7 +133,7 @@ resource "aws_security_group_rule" "ovpn" {
   security_group_id = aws_security_group.bastion_sg.id
 }
 
-# bastion 서버에서 vpn 접근 허용
+# public ip를 통해 8080 포트 접근 허용
 resource "aws_security_group_rule" "api" {
   type              = "ingress"
   from_port         = 8080
