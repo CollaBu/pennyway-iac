@@ -22,3 +22,8 @@ output "subnet_data_id" {
 output "igw_id" {
   value = aws_internet_gateway.igw.id
 }
+
+# network 모듈에서 정의한 bastion의 ip를 참조하기 위해 선언
+output "bastion_cidr" {
+  value = aws_subnet.net.cidr_block
+}

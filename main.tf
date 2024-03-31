@@ -27,4 +27,5 @@ module "was" {
   env_name       = var.env_name_dev
   terraform_name = var.terraform_name
   keypair        = var.keypair
+  bastion_cidr   = module.network.bastion_cidr
 }

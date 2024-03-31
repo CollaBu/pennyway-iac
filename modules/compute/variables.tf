@@ -37,3 +37,8 @@ variable "subnet_id" {
 variable "name" {
   type = string
 }
+
+# bastion 호스트의 ip
+variable "bastion_cidr" {
+  type = string
+}
