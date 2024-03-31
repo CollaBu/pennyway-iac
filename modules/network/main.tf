@@ -124,6 +124,16 @@ resource "aws_security_group_rule" "bastion_inbound_ssh" {
 }
 
 # bastion 서버에서 vpn 접근 허용
+resource "aws_security_group_rule" "http" {
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.bastion_sg.id
+}
+
+# bastion 서버에서 vpn 접근 허용
 resource "aws_security_group_rule" "ovpn" {
   type              = "ingress"
   from_port         = 1194
