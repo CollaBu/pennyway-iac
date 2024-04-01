@@ -16,3 +16,12 @@ resource "aws_route53_record" "prod_to_dev" {
   ttl     = "172800"
   records = aws_route53_zone.zone_dev.name_servers
 }
+
+# 개발 환경 - bastion 호스트 연결
+resource "aws_route53_record" "dev_to_bastion" {
+  zone_id = aws_route53_zone.zone_dev.zone_id
+  name    = "dev.${var.domain}"
+  type    = "A"
+  ttl     = "300"
+  records = [var.bastion_ip]
+}
