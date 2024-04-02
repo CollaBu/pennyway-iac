@@ -14,6 +14,7 @@ module "network" {
   terraform_name = var.terraform_name
   keypair        = var.keypair
   remote_ip      = var.remote_ip
+  domain         = var.domain
 }
 
 # was 서버 구축
@@ -28,11 +29,4 @@ module "was" {
   terraform_name = var.terraform_name
   keypair        = var.keypair
   bastion_cidr   = module.network.bastion_cidr
-}
-
-# route53 호스팅존 구축
-module "domain" {
-  source     = "./modules/domain"
-  domain     = var.domain
-  bastion_ip = module.network.bastion_ip
 }

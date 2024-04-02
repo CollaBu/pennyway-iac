@@ -32,3 +32,12 @@ output "bastion_cidr" {
 output "bastion_ip" {
   value = aws_instance.bastion.public_ip
 }
+
+# alb를 사용하기 위한 AZ가 다른 두 개의 public subnet
+output "net1_id" {
+  value = aws_subnet.net.id
+}
+
+output "net2_id" {
+  value = aws_subnet.net2.id
+}

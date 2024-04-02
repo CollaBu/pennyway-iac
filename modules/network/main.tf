@@ -41,6 +41,17 @@ resource "aws_subnet" "net" {
   }
 }
 
+# net subnet2 정의(nat, bastion이 이에 속함)
+resource "aws_subnet" "net2" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = cidrsubnet(var.cidr_block, 8, 3)
+  availability_zone = "ap-northeast-2b"
+
+  tags = {
+    Name = "${var.region_name}-${var.terraform_name}-${var.env_name}-net-public"
+  }
+}
+
 # app subnet 정의(web, was가 이에 속함)
 resource "aws_subnet" "app" {
   vpc_id            = aws_vpc.vpc.id
@@ -123,11 +134,21 @@ resource "aws_security_group_rule" "bastion_inbound_ssh" {
   security_group_id = aws_security_group.bastion_sg.id
 }
 
-# bastion 서버에서 vpn 접근 허용
+# bastion 서버에서 http 접근 허용
 resource "aws_security_group_rule" "http" {
   type              = "ingress"
   from_port         = 80
   to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.bastion_sg.id
+}
+
+# bastion 서버에서 https 접근 허용
+resource "aws_security_group_rule" "https" {
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.bastion_sg.id
@@ -203,3 +224,32 @@ resource "aws_instance" "bastion" {
     Name = "${var.region_name}-${var.terraform_name}-${var.env_name}-bastion"
   }
 }
+
+# 호스팅 영역 리소스 - 운영 환경
+resource "aws_route53_zone" "zone_prod" {
+  name = var.domain
+}
+
+# 호스팅 영역 리소스 - 개발 환경 
+resource "aws_route53_zone" "zone_dev" {
+  name = "dev.${var.domain}"
+}
+
+# 운영 환경 - 개발 환경 호스팅 영역 분리
+resource "aws_route53_record" "prod_to_dev" {
+  zone_id = aws_route53_zone.zone_prod.zone_id
+  name    = "dev.${var.domain}"
+  type    = "NS"
+  ttl     = "172800"
+  records = aws_route53_zone.zone_dev.name_servers
+}
+
+# 개발 환경 - bastion 호스트 연결
+resource "aws_route53_record" "dev_to_bastion" {
+  zone_id = aws_route53_zone.zone_dev.zone_id
+  name    = "*.dev.${var.domain}"
+  type    = "A"
+  ttl     = "300"
+  records = [aws_instance.bastion.public_ip]
+}
+
