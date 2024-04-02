@@ -244,12 +244,30 @@ resource "aws_route53_record" "prod_to_dev" {
   records = aws_route53_zone.zone_dev.name_servers
 }
 
+# 개발 환경에서 HTTP 및 HTTPS 트래픽을 컨트롤하기 위한 ALB 생성
+resource "aws_lb" "alb" {
+  name               = "${var.terraform_name}-alb"
+  load_balancer_type = "application"
+  internal           = false
+  security_groups = [
+    aws_vpc.vpc.default_security_group_id,
+    aws_security_group.bastion_sg.id
+  ]
+  subnets = [
+    aws_subnet.net.id,
+    aws_subnet.net2.id
+  ]
+}
+
 # 개발 환경 - bastion 호스트 연결
 resource "aws_route53_record" "dev_to_bastion" {
   zone_id = aws_route53_zone.zone_dev.zone_id
   name    = "*.dev.${var.domain}"
   type    = "A"
-  ttl     = "300"
-  records = [aws_instance.bastion.public_ip]
-}
 
+  alias {
+    name                   = aws_lb.alb.dns_name
+    zone_id                = aws_lb.alb.zone_id
+    evaluate_target_health = true
+  }
+}
