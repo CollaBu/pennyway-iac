@@ -14,6 +14,7 @@ module "network" {
   terraform_name = var.terraform_name
   keypair        = var.keypair
   remote_ip      = var.remote_ip
+  domain         = var.domain
 }
 
 # was 서버 구축
@@ -27,4 +28,5 @@ module "was" {
   env_name       = var.env_name_dev
   terraform_name = var.terraform_name
   keypair        = var.keypair
+  bastion_cidr   = module.network.bastion_cidr
 }

@@ -14,7 +14,7 @@ resource "aws_security_group_rule" "compute_inbound" {
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = [var.bastion_cidr]
   security_group_id = aws_security_group.compute_sg.id
 }
 

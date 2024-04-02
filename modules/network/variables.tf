@@ -27,3 +27,8 @@ variable "keypair" {
 variable "remote_ip" {
   type = string
 }
+
+# 서비스 도메인
+variable "domain" {
+  type = string
+}

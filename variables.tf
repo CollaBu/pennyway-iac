@@ -46,3 +46,8 @@ variable "remote_ip" {
 variable "keypair" {
   type = string
 }
+
+# 구매한 도메인
+variable "domain" {
+  type = string
+}
