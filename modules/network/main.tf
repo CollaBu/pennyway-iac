@@ -175,7 +175,7 @@ resource "aws_security_group_rule" "api" {
 }
 
 # bastion 서버에서 net 서브넷에서 오는 접근 허용
-resource "aws_security_group_rule" "vpc-inbound" {
+resource "aws_security_group_rule" "vpc_inbound" {
   type              = "ingress"
   from_port         = 0
   to_port           = 0
@@ -270,4 +270,41 @@ resource "aws_route53_record" "dev_to_bastion" {
     zone_id                = aws_lb.alb.zone_id
     evaluate_target_health = true
   }
+}
+
+# 개발 도메인 인증서 생성
+resource "aws_acm_certificate" "cert_dev" {
+  domain_name       = "*.dev.${var.domain}"
+  validation_method = "DNS"
+
+  subject_alternative_names = [
+    "*.dev.${var.domain}", # 와일드카드 서브도메인
+  ]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# 개발 도메인 및 하위 도메인의 DNS 레코드 생성
+resource "aws_route53_record" "validation_dev" {
+  for_each = {
+    for dvo in aws_acm_certificate.cert_dev.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      type   = dvo.resource_record_type
+      record = dvo.resource_record_value
+    }
+  }
+
+  zone_id = aws_route53_zone.zone_dev.zone_id
+  name    = each.value.name
+  type    = each.value.type
+  records = [each.value.record]
+  ttl     = 60
+}
+
+# 개발 도메인 인증서 검증
+resource "aws_acm_certificate_validation" "validation_dev" {
+  certificate_arn         = aws_acm_certificate.cert_dev.arn
+  validation_record_fqdns = [for record in aws_route53_record.validation_dev : record.fqdn]
 }
