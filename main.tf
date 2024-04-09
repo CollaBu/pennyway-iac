@@ -30,3 +30,9 @@ module "was" {
   keypair        = var.keypair
   bastion_cidr   = module.network.bastion_cidr
 }
+
+# serverless web 인스턴스 구축
+module "web" {
+  source              = "./modules/web"
+  github_access_token = var.github_access_token
+}
