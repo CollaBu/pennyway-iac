@@ -30,3 +30,15 @@ resource "aws_amplify_app" "app" {
     # 추후 환경 변수 추가
   }
 }
+
+resource "aws_amplify_branch" "dev_branch" {
+  app_id                      = aws_amplify_app.app.id
+  branch_name                 = "develop"
+  enable_pull_request_preview = true
+}
+
+resource "aws_amplify_branch" "main_branch" {
+  app_id                      = aws_amplify_app.app.id
+  branch_name                 = "main"
+  enable_pull_request_preview = true
+}
