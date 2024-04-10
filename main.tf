@@ -32,7 +32,7 @@ module "was" {
 }
 
 # serverless web 인스턴스 구축
-module "web" {
-  source              = "./modules/web"
+module "amplify_web" {
+  source              = "./modules/amplify_web"
   github_access_token = var.github_access_token
 }
