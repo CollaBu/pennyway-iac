@@ -27,14 +27,14 @@ resource "aws_amplify_app" "app" {
   }
 }
 
-resource "aws_amplify_branch" "dev_branch" {
+resource "aws_amplify_branch" "develop" {
   app_id                        = aws_amplify_app.app.id
   branch_name                   = "develop"
   enable_pull_request_preview   = true
   pull_request_environment_name = "dev_pr"
 }
 
-resource "aws_amplify_branch" "main_branch" {
+resource "aws_amplify_branch" "main" {
   app_id                        = aws_amplify_app.app.id
   branch_name                   = "main"
   enable_pull_request_preview   = true
