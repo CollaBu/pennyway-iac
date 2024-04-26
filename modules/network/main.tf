@@ -203,7 +203,7 @@ data "aws_ami" "ubuntu" {
 
 # bastion 서버(EC2) 생성
 resource "aws_instance" "bastion" {
-  ami                         = data.aws_ami.ubuntu.id
+  ami                         = "ami-00e557080ac814181"
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.net.id
   vpc_security_group_ids      = [aws_security_group.bastion_sg.id]
@@ -290,7 +290,7 @@ resource "aws_lb_target_group" "alb_target_group" {
 
   health_check {
     enabled             = true
-    interval            = 30
+    interval            = 300
     path                = "/v3/api-docs"
     port                = "traffic-port"
     healthy_threshold   = 2
@@ -305,8 +305,6 @@ resource "aws_lb_target_group_attachment" "bastion" {
   target_group_arn = aws_lb_target_group.alb_target_group.arn
   target_id        = aws_instance.bastion.id
   port             = 80
-
-
 }
 
 # 개발 환경 - bastion 호스트 연결
