@@ -36,3 +36,10 @@ module "amplify_web" {
   source              = "./modules/amplify_web"
   github_access_token = var.github_access_token
 }
+
+# S3 버킷 구축
+module "storage" {
+  source   = "./modules/storage"
+  env_name = var.env_name_dev
+  domain   = var.domain
+}
