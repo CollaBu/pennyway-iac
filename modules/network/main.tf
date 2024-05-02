@@ -320,6 +320,19 @@ resource "aws_route53_record" "dev_to_bastion" {
   }
 }
 
+# 개발 환경 - Storage(S3) 연결
+resource "aws_route53_record" "dev_to_storage" {
+  zone_id = aws_route53_zone.zone_dev.zone_id
+  name    = "s3.dev.${var.domain}"
+  type    = "A"
+
+  alias {
+    name                   = var.bucket_website_endpoint
+    zone_id                = var.bucket_zone_id
+    evaluate_target_health = false
+  }
+}
+
 # 개발 도메인 인증서 생성
 resource "aws_acm_certificate" "cert_dev" {
   domain_name       = "*.dev.${var.domain}"

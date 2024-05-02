@@ -32,3 +32,13 @@ variable "remote_ip" {
 variable "domain" {
   type = string
 }
+
+# S3 버킷 엔드포인트
+variable "bucket_website_endpoint" {
+  type = string
+}
+
+# S3 웹사이트의 zone_id 
+variable "bucket_zone_id" {
+  type = string
+}

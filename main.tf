@@ -7,14 +7,16 @@ provider "aws" {
 
 # VPC, Subnet 등 네트워크 환경 구축
 module "network" {
-  source         = "./modules/network"
-  cidr_block     = var.cidr_block
-  region_name    = var.region_name
-  env_name       = var.env_name_dev
-  terraform_name = var.terraform_name
-  keypair        = var.keypair
-  remote_ip      = var.remote_ip
-  domain         = var.domain
+  source                  = "./modules/network"
+  cidr_block              = var.cidr_block
+  region_name             = var.region_name
+  env_name                = var.env_name_dev
+  terraform_name          = var.terraform_name
+  keypair                 = var.keypair
+  remote_ip               = var.remote_ip
+  domain                  = var.domain
+  bucket_website_endpoint = module.storage.bucket_website_endpoint
+  bucket_zone_id          = module.storage.bucket_zone_id
 }
 
 # was 서버 구축
@@ -35,4 +37,11 @@ module "was" {
 module "amplify_web" {
   source              = "./modules/amplify_web"
   github_access_token = var.github_access_token
+}
+
+# S3 버킷 구축
+module "storage" {
+  source   = "./modules/storage"
+  env_name = var.env_name_dev
+  domain   = var.domain
 }
