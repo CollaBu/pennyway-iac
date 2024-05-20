@@ -17,6 +17,8 @@ module "network" {
   domain                  = var.domain
   bucket_website_endpoint = module.storage.bucket_website_endpoint
   bucket_zone_id          = module.storage.bucket_zone_id
+  cdn_domain_name         = module.storage.cdn_domain_name
+  cdn_zone_id             = module.storage.cdn_zone_id
 }
 
 # was 서버 구축
@@ -41,7 +43,8 @@ module "amplify_web" {
 
 # S3 버킷 구축
 module "storage" {
-  source   = "./modules/storage"
-  env_name = var.env_name_dev
-  domain   = var.domain
+  source          = "./modules/storage"
+  env_name        = var.env_name_dev
+  domain          = var.domain
+  certificate_arn = module.network.cert_cdn_arn
 }
