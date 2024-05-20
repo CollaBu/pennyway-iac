@@ -32,3 +32,8 @@ output "bastion_cidr" {
 output "bastion_ip" {
   value = aws_instance.bastion.public_ip
 }
+
+# CDN 개발 환경 인증서 arn
+output "cert_cdn_arn" {
+  value = aws_acm_certificate.cert_dev_cdn.arn
+}

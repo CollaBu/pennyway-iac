@@ -7,3 +7,13 @@ output "bucket_website_endpoint" {
 output "bucket_zone_id" {
   value = aws_s3_bucket.bucket.hosted_zone_id
 }
+
+# CDN의 domain_name
+output "cdn_domain_name" {
+  value = aws_cloudfront_distribution.s3_cdn.domain_name
+}
+
+# CDN의 zone_id
+output "cdn_zone_id" {
+  value = aws_cloudfront_distribution.s3_cdn.hosted_zone_id
+}

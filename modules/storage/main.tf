@@ -80,6 +80,10 @@ resource "aws_cloudfront_distribution" "s3_cdn" {
   is_ipv6_enabled = true
   comment         = "CDN for my S3 bucket"
 
+  aliases = [
+    "cdn.${var.env_name}.${var.domain}",
+  ]
+
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
@@ -94,6 +98,7 @@ resource "aws_cloudfront_distribution" "s3_cdn" {
     }
 
     viewer_protocol_policy = "redirect-to-https"
+    max_ttl                = 43200 # 12 hours
   }
 
   restrictions {
@@ -103,6 +108,8 @@ resource "aws_cloudfront_distribution" "s3_cdn" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = var.certificate_arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2018"
   }
 }
