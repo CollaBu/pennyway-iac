@@ -61,10 +61,12 @@ resource "aws_s3_bucket_website_configuration" "website_config" {
   }
 }
 
+# S3 버킷에 CDN 설정을 위한 Origin Access Identity 생성
 resource "aws_cloudfront_origin_access_identity" "oai" {
   comment = "OAI for my S3 bucket"
 }
 
+# S3 버킷에 대한 CDN 리소스 생성
 resource "aws_cloudfront_distribution" "s3_cdn" {
   origin {
     domain_name = aws_s3_bucket.bucket.bucket_regional_domain_name
