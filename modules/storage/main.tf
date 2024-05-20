@@ -16,7 +16,21 @@ resource "aws_s3_bucket_public_access_block" "example" {
 # S3 버킷 접근 제어 정책 설정
 resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
   bucket = aws_s3_bucket.bucket.id
-  policy = data.aws_iam_policy_document.allow_access_from_another_account.json
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          "AWS" = "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${aws_cloudfront_origin_access_identity.oai.id}"
+        }
+        Action = "s3:GetObject"
+        Resource = [
+          "${aws_s3_bucket.bucket.arn}/*"
+        ]
+      }
+    ]
+  })
 }
 
 # 다른 계정에서 S3 버킷에 접근할 수 있도록 권한 설정
