@@ -42,3 +42,13 @@ variable "bucket_website_endpoint" {
 variable "bucket_zone_id" {
   type = string
 }
+
+# CDN의 domain_name
+variable "cdn_domain_name" {
+  type = string
+}
+
+# CDN의 zone_id
+variable "cdn_zone_id" {
+  type = string
+}

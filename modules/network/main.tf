@@ -347,6 +347,21 @@ resource "aws_acm_certificate" "cert_dev" {
   }
 }
 
+# CDN용 개발 도메인 인증 생성
+resource "aws_acm_certificate" "cert_dev_cdn" {
+  provider          = aws.us_east_1
+  domain_name       = "*.dev.${var.domain}"
+  validation_method = "DNS"
+
+  subject_alternative_names = [
+    "*.dev.${var.domain}", # 와일드카드 서브도메인
+  ]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 # 개발 도메인 및 하위 도메인의 DNS 레코드 생성
 resource "aws_route53_record" "validation_dev" {
   for_each = {
@@ -368,4 +383,22 @@ resource "aws_route53_record" "validation_dev" {
 resource "aws_acm_certificate_validation" "validation_dev" {
   certificate_arn         = aws_acm_certificate.cert_dev.arn
   validation_record_fqdns = [for record in aws_route53_record.validation_dev : record.fqdn]
+}
+
+# 개발 환경 - CDN 연결
+resource "aws_route53_record" "cdn" {
+  zone_id = aws_route53_zone.zone_dev.zone_id
+  name    = "cdn.dev.${var.domain}"
+  type    = "A"
+
+  alias {
+    name                   = var.cdn_domain_name
+    zone_id                = var.cdn_zone_id
+    evaluate_target_health = false
+  }
+}
+
+provider "aws" {
+  alias  = "us_east_1"
+  region = "us-east-1"
 }
