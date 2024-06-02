@@ -30,10 +30,25 @@ resource "aws_iam_role_policy_attachment" "s3_policy" {
 
 # Lambda 함수 생성
 resource "aws_lambda_function" "lambda" {
-  function_name    = "lambda_s3"
+  function_name    = "lambda_${var.function_name}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs18.x"
-  filename         = var.function_name
-  source_code_hash = filebase64sha256(var.function_name)
+  filename         = var.function
+  source_code_hash = filebase64sha256(var.function)
+
+  environment {
+    variables = {
+      BUCKET = var.bucket.name
+    }
+  }
+}
+
+# S3 버킷에 Lambda 함수 실행 권한 부여
+resource "aws_lambda_permission" "s3_invoke_lambda" {
+  statement_id  = "AllowS3Invoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda.function_name
+  principal     = "s3.amazonaws.com"
+  source_arn    = var.bucket.arn
 }

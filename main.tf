@@ -48,3 +48,11 @@ module "storage" {
   domain          = var.domain
   certificate_arn = module.network.cert_cdn_arn
 }
+
+# Lambda 함수 구축
+module "lambda" {
+  source        = "./modules/lambda"
+  function_name = "s3_image_resizer"
+  function      = "lambda_functions/image_resizer.zip"
+  bucket        = module.storage.bucket
+}
