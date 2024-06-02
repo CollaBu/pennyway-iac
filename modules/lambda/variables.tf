@@ -11,6 +11,7 @@ variable "function" {
 # lambda 함수의 트리거 역할을 할 S3 버킷
 variable "bucket" {
   type = object({
+    id   = string
     name = string
     arn  = string
   })

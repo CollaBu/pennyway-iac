@@ -21,6 +21,7 @@ output "cdn_zone_id" {
 # S3 버킷
 output "bucket" {
   value = {
+    id   = aws_s3_bucket.bucket.id
     name = aws_s3_bucket.bucket.bucket
     arn  = aws_s3_bucket.bucket.arn
   }
