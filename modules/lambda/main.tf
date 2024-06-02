@@ -148,3 +148,14 @@ resource "aws_lambda_permission" "s3_invoke_lambda_feed" {
   principal     = "s3.amazonaws.com"
   source_arn    = var.bucket.arn
 }
+
+# S3 버킷에 Lambda 함수 트리거 설정
+resource "aws_s3_bucket_notification" "bucket_notification" {
+  bucket = var.bucket.id
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.lambda.arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = "delete/"
+  }
+}
