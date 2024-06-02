@@ -54,5 +54,7 @@ module "lambda" {
   source        = "./modules/lambda"
   function_name = "s3_image_resizer"
   function      = "lambda_functions/image_resizer.zip"
+  layer         = "lambda_layers/image_resizer.zip"
   bucket        = module.storage.bucket
+
 }

@@ -8,6 +8,11 @@ variable "function" {
   type = string
 }
 
+# lambda 함수의 layer
+variable "layer" {
+  type = string
+}
+
 # lambda 함수의 트리거 역할을 할 S3 버킷
 variable "bucket" {
   type = object({
