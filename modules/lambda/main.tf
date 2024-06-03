@@ -50,6 +50,10 @@ resource "aws_lambda_function" "lambda_profile" {
     "arn:aws:lambda:ap-northeast-2:826293736237:layer:AWS-AppConfig-Extension:113"
   ]
 
+  layers = [
+    aws_lambda_layer_version.layer.arn
+  ]
+
   environment {
     variables = {
       BUCKET = var.bucket.name
@@ -158,4 +162,12 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
     events              = ["s3:ObjectCreated:*"]
     filter_prefix       = "delete/"
   }
+}
+
+# Lambda Layer 생성
+resource "aws_lambda_layer_version" "layer" {
+  filename            = var.layer
+  layer_name          = "nodejs"
+  compatible_runtimes = ["nodejs18.x"]
+  source_code_hash    = filebase64sha256(var.layer)
 }

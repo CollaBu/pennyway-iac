@@ -53,7 +53,12 @@ module "storage" {
 module "lambda" {
   source        = "./modules/lambda"
   function_name = "s3_image_resizer"
+<<<<<<< HEAD
   function      = "lambda_functions/image-resizer/"
+=======
+  function      = "lambda_functions/image_resizer.zip"
+>>>>>>> ebebbb9 (feat: image-resizer 관련 의존성 layer 추가)
   layer         = "lambda_layers/image_resizer.zip"
   bucket        = module.storage.bucket
+
 }
