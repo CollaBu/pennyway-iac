@@ -17,3 +17,12 @@ output "cdn_domain_name" {
 output "cdn_zone_id" {
   value = aws_cloudfront_distribution.s3_cdn.hosted_zone_id
 }
+
+# S3 버킷
+output "bucket" {
+  value = {
+    id   = aws_s3_bucket.bucket.id
+    name = aws_s3_bucket.bucket.bucket
+    arn  = aws_s3_bucket.bucket.arn
+  }
+}
