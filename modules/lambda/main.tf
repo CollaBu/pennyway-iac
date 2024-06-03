@@ -46,7 +46,8 @@ resource "aws_lambda_function" "lambda_profile" {
   source_code_hash = filebase64sha256("${var.function}/profile.zip")
 
   layers = [
-    aws_lambda_layer_version.layer.arn
+    aws_lambda_layer_version.layer.arn,
+    "arn:aws:lambda:ap-northeast-2:826293736237:layer:AWS-AppConfig-Extension:113"
   ]
 
   environment {
@@ -66,13 +67,31 @@ resource "aws_lambda_permission" "s3_invoke_lambda_profile" {
 }
 
 # S3 버킷에 Lambda 함수 트리거 설정 - Profile
-resource "aws_s3_bucket_notification" "profile_notification" {
+resource "aws_s3_bucket_notification" "lambda_notification" {
   bucket = var.bucket.id
 
   lambda_function {
     lambda_function_arn = aws_lambda_function.lambda_profile.arn
     events              = ["s3:ObjectCreated:*"]
     filter_prefix       = "profile/"
+  }
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.lambda_chatroom.arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = "chatroom/"
+  }
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.lambda_feed.arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = "feed/"
+  }
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.lambda_test.arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = "delete/"
   }
 }
 
@@ -86,7 +105,8 @@ resource "aws_lambda_function" "lambda_chatroom" {
   source_code_hash = filebase64sha256("${var.function}/chatroom.zip")
 
   layers = [
-    aws_lambda_layer_version.layer.arn
+    aws_lambda_layer_version.layer.arn,
+    "arn:aws:lambda:ap-northeast-2:826293736237:layer:AWS-AppConfig-Extension:113"
   ]
 
   environment {
@@ -105,17 +125,6 @@ resource "aws_lambda_permission" "s3_invoke_lambda_chatroom" {
   source_arn    = var.bucket.arn
 }
 
-# S3 버킷에 Lambda 함수 트리거 설정 - Chatroom
-resource "aws_s3_bucket_notification" "chatroom_notification" {
-  bucket = var.bucket.id
-
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.lambda_chatroom.arn
-    events              = ["s3:ObjectCreated:*"]
-    filter_prefix       = "chatroom/"
-  }
-}
-
 # Lambda 함수 생성 - Feed
 resource "aws_lambda_function" "lambda_feed" {
   function_name    = "lambda_${var.function_name}_feed"
@@ -126,7 +135,8 @@ resource "aws_lambda_function" "lambda_feed" {
   source_code_hash = filebase64sha256("${var.function}/feed.zip")
 
   layers = [
-    aws_lambda_layer_version.layer.arn
+    aws_lambda_layer_version.layer.arn,
+    "arn:aws:lambda:ap-northeast-2:826293736237:layer:AWS-AppConfig-Extension:113"
   ]
 
   environment {
@@ -143,15 +153,4 @@ resource "aws_lambda_permission" "s3_invoke_lambda_feed" {
   function_name = aws_lambda_function.lambda_feed.function_name
   principal     = "s3.amazonaws.com"
   source_arn    = var.bucket.arn
-}
-
-# S3 버킷에 Lambda 함수 트리거 설정 - Feed
-resource "aws_s3_bucket_notification" "feed_notification" {
-  bucket = var.bucket.id
-
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.lambda_profile.arn
-    events              = ["s3:ObjectCreated:*"]
-    filter_prefix       = "feed/"
-  }
 }
