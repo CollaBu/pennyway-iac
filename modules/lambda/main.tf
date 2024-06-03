@@ -87,12 +87,6 @@ resource "aws_s3_bucket_notification" "lambda_notification" {
     events              = ["s3:ObjectCreated:*"]
     filter_prefix       = "feed/"
   }
-
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.lambda_test.arn
-    events              = ["s3:ObjectCreated:*"]
-    filter_prefix       = "delete/"
-  }
 }
 
 # Lambda 함수 생성 - Chatroom
