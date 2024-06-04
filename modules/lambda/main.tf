@@ -42,8 +42,8 @@ resource "aws_lambda_function" "lambda_profile" {
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs18.x"
-  filename         = "${var.function}/profile.zip"
-  source_code_hash = filebase64sha256("${var.function}/profile.zip")
+  filename         = "${var.function}/profile_v2.zip"
+  source_code_hash = filebase64sha256("${var.function}/profile_v2.zip")
 
   layers = [
     aws_lambda_layer_version.layer.arn,
@@ -95,8 +95,8 @@ resource "aws_lambda_function" "lambda_chatroom" {
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs18.x"
-  filename         = "${var.function}/chatroom.zip"
-  source_code_hash = filebase64sha256("${var.function}/chatroom.zip")
+  filename         = "${var.function}/chatroom_v2.zip"
+  source_code_hash = filebase64sha256("${var.function}/chatroom_v2.zip")
 
   layers = [
     aws_lambda_layer_version.layer.arn,
@@ -125,8 +125,8 @@ resource "aws_lambda_function" "lambda_feed" {
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.handler"
   runtime          = "nodejs18.x"
-  filename         = "${var.function}/feed.zip"
-  source_code_hash = filebase64sha256("${var.function}/feed.zip")
+  filename         = "${var.function}/feed_v2.zip"
+  source_code_hash = filebase64sha256("${var.function}/feed_v2.zip")
 
   layers = [
     aws_lambda_layer_version.layer.arn,
