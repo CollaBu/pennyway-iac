@@ -113,3 +113,22 @@ resource "aws_cloudfront_distribution" "s3_cdn" {
     minimum_protocol_version = "TLSv1.2_2018"
   }
 }
+
+# S3 버킷 Lifecycle 설정
+resource "aws_s3_bucket_lifecycle_configuration" "lifecycle" {
+  bucket = aws_s3_bucket.bucket.id
+
+  rule {
+    id = "delete-rule"
+
+    filter {
+      prefix = "delete/"
+    }
+
+    status = "Enabled"
+
+    expiration {
+      days = 2
+    }
+  }
+}
