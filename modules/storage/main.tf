@@ -1,6 +1,7 @@
 # S3 버킷 리소스
 resource "aws_s3_bucket" "bucket" {
   bucket = "s3.${var.env_name}.${var.domain}"
+
 }
 
 # S3 버킷의 Public Access Block 설정
@@ -28,6 +29,18 @@ resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
         Resource = [
           "${aws_s3_bucket.bucket.arn}/*"
         ]
+      },
+      {
+        "Sid" : "LimitUploadSize",
+        "Effect" : "Deny",
+        "Principal" : "*",
+        "Action" : "s3:PutObject",
+        "Resource" : "arn:aws:s3:::${aws_s3_bucket.bucket.arn}/*",
+        "Condition" : {
+          "NumericGreaterThan" : {
+            "s3:ContentLength" : 26214400 # 25MB
+          }
+        }
       }
     ]
   })
