@@ -281,6 +281,12 @@ resource "aws_lb_listener" "https" {
   }
 }
 
+# 운영 환경 인증서 추가
+resource "aws_lb_listener_certificate" "https_cert_prod" {
+  listener_arn    = aws_lb_listener.https.arn
+  certificate_arn = aws_acm_certificate.cert_prod.arn
+}
+
 resource "aws_lb_target_group" "alb_target_group" {
   name        = "bastion"
   port        = 80
@@ -307,6 +313,19 @@ resource "aws_lb_target_group_attachment" "bastion" {
   port             = 80
 }
 
+# 운영 환경 - bastion 호스트 연결
+resource "aws_route53_record" "prod_to_bastion" {
+  zone_id = aws_route53_zone.zone_prod.zone_id
+  name    = "*.${var.domain}"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.alb.dns_name
+    zone_id                = aws_lb.alb.zone_id
+    evaluate_target_health = true
+  }
+}
+
 # 개발 환경 - bastion 호스트 연결
 resource "aws_route53_record" "dev_to_bastion" {
   zone_id = aws_route53_zone.zone_dev.zone_id
@@ -330,6 +349,20 @@ resource "aws_route53_record" "dev_to_storage" {
     name                   = var.bucket_website_endpoint
     zone_id                = var.bucket_zone_id
     evaluate_target_health = false
+  }
+}
+
+# 운영 환경 도메인 인증서 생성
+resource "aws_acm_certificate" "cert_prod" {
+  domain_name       = var.domain
+  validation_method = "DNS"
+
+  subject_alternative_names = [
+    "*.${var.domain}",
+  ]
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -362,6 +395,29 @@ resource "aws_acm_certificate" "cert_dev_cdn" {
   }
 }
 
+# 운영 도메인 및 하위 도메인의 DNS 레코드 생성
+resource "aws_route53_record" "validation_prod" {
+  for_each = {
+    for dvo in aws_acm_certificate.cert_prod.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      type   = dvo.resource_record_type
+      record = dvo.resource_record_value
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = aws_route53_zone.zone_prod.zone_id
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+
 # 개발 도메인 및 하위 도메인의 DNS 레코드 생성
 resource "aws_route53_record" "validation_dev" {
   for_each = {
@@ -379,10 +435,29 @@ resource "aws_route53_record" "validation_dev" {
   ttl     = 60
 }
 
+# 운영 도메인 인증서 검증
+resource "aws_acm_certificate_validation" "validation_prod" {
+  certificate_arn         = aws_acm_certificate.cert_prod.arn
+  validation_record_fqdns = [for record in aws_route53_record.validation_prod : record.fqdn]
+}
+
 # 개발 도메인 인증서 검증
 resource "aws_acm_certificate_validation" "validation_dev" {
   certificate_arn         = aws_acm_certificate.cert_dev.arn
   validation_record_fqdns = [for record in aws_route53_record.validation_dev : record.fqdn]
+}
+
+# 운영 환경 도메인 접속 시 개발 환경으로 연결
+resource "aws_route53_record" "main_to_dev" {
+  zone_id = aws_route53_zone.zone_prod.zone_id
+  name    = var.domain
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.alb.dns_name
+    zone_id                = aws_lb.alb.zone_id
+    evaluate_target_health = true
+  }
 }
 
 # 개발 환경 - CDN 연결
