@@ -297,7 +297,7 @@ resource "aws_lb_target_group" "alb_target_group" {
   health_check {
     enabled             = true
     interval            = 300
-    path                = "/v3/api-docs"
+    path                = "/actuator/health"
     port                = "traffic-port"
     healthy_threshold   = 2
     unhealthy_threshold = 2
