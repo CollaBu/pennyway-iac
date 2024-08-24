@@ -56,3 +56,13 @@ variable "domain" {
 variable "github_access_token" {
   type = string
 }
+
+# DB 접근을 위한 username
+variable "db_username" {
+  type = string
+}
+
+# DB 접근을 위한 password
+variable "db_password" {
+  type = string
+}
