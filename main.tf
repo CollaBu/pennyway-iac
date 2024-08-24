@@ -57,3 +57,17 @@ module "lambda" {
   layer         = "lambda_layers/image_resizer.zip"
   bucket        = module.storage.bucket
 }
+
+# RDS 구축
+module "rds" {
+  source         = "./modules/rds"
+  vpc_id         = module.network.vpc_id
+  region_name    = var.region_name
+  terraform_name = var.terraform_name
+  env_name       = var.env_name_dev
+  db_username    = var.db_username
+  db_password    = var.db_password
+  app_cidr_block = module.network.app_cidr_block
+  subnet_id_1    = module.network.data_subnet_id_1
+  subnet_id_2    = module.network.data_subnet_id_2
+}

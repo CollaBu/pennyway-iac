@@ -64,13 +64,24 @@ resource "aws_subnet" "app" {
 }
 
 # data subnet 정의(rds, elasticcache 등이 이에 속함)
-resource "aws_subnet" "data" {
+resource "aws_subnet" "data1" {
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = cidrsubnet(var.cidr_block, 8, 2)
   availability_zone = "ap-northeast-2a"
 
   tags = {
-    Name = "${var.region_name}-${var.terraform_name}-${var.env_name}-data-private"
+    Name = "${var.region_name}-${var.terraform_name}-${var.env_name}-data-private/az1"
+  }
+}
+
+# data subnet 정의(rds, elasticcache 등이 이에 속함)
+resource "aws_subnet" "data2" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = cidrsubnet(var.cidr_block, 8, 4)
+  availability_zone = "ap-northeast-2b"
+
+  tags = {
+    Name = "${var.region_name}-${var.terraform_name}-${var.env_name}-data-private/az2"
   }
 }
 
@@ -103,6 +114,23 @@ resource "aws_route_table" "app" {
   }
 }
 
+# data subnet에서 사용되는 route_table 정의
+resource "aws_route_table" "data" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name = "${var.region_name}-${var.terraform_name}-${var.env_name}-data-rtb"
+  }
+}
+
+# data route table에 대한 route 정의
+resource "aws_route" "data_to_app" {
+  route_table_id         = aws_route_table.data.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.ngw.id
+}
+
+# app route table에 대한 route 정의
 resource "aws_route" "outbound_nat_route" {
   route_table_id         = aws_route_table.app.id
   destination_cidr_block = "0.0.0.0/0"
@@ -113,6 +141,18 @@ resource "aws_route" "outbound_nat_route" {
 resource "aws_route_table_association" "app" {
   subnet_id      = aws_subnet.app.id
   route_table_id = aws_route_table.app.id
+}
+
+# data subnet1과 route_table을 연결
+resource "aws_route_table_association" "data1" {
+  subnet_id      = aws_subnet.data1.id
+  route_table_id = aws_route_table.data.id
+}
+
+# data subnet2과 route_table을 연결
+resource "aws_route_table_association" "data2" {
+  subnet_id      = aws_subnet.data2.id
+  route_table_id = aws_route_table.data.id
 }
 
 # bastion 서버의 security-group 정의

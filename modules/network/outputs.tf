@@ -37,3 +37,18 @@ output "bastion_ip" {
 output "cert_cdn_arn" {
   value = aws_acm_certificate.cert_dev_cdn.arn
 }
+
+# RDS 접속을 위한 CIDR block
+output "app_cidr_block" {
+  value = aws_subnet.app.cidr_block
+}
+
+# RDS 서브넷 그룹을 위한 subnet id 1
+output "data_subnet_id_1" {
+  value = aws_subnet.data1.id
+}
+
+# RDS 서브넷 그룹을 위한 subnet id 2
+output "data_subnet_id_2" {
+  value = aws_subnet.data2.id
+}
