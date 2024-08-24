@@ -38,8 +38,15 @@ variable "subnet_id_1" {
   description = "ID of the first subnet for RDS"
   type        = string
 }
+
 # rds 서브넷 그룹을 위한 subnet id 2
 variable "subnet_id_2" {
   description = "ID of the second subnet for RDS"
   type        = string
 }
+
+# bastion 서버의 cidr block
+variable "bastion_cidr" {
+  type = string
+}
+

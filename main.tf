@@ -70,4 +70,5 @@ module "rds" {
   app_cidr_block = module.network.app_cidr_block
   subnet_id_1    = module.network.data_subnet_id_1
   subnet_id_2    = module.network.data_subnet_id_2
+  bastion_cidr   = module.network.bastion_cidr
 }
