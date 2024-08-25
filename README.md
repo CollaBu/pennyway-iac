@@ -4,28 +4,62 @@
 
 ### ☁️ Cloud Architecture
 
-![image](https://gist.github.com/assets/68031450/da034019-5cbd-4f1a-b3ae-6baaeb0b771a)
+![image](/assets/infra_architecture.png)
 
 ### 🗂️ Directory Architecture
 
-```plain
+```plaintext
 pennyway-iac/
-├── modules/
-│   ├── network/
-│   │   ├── main.tf
-│   │   ├── variables.tf
-│   │   └── outputs.tf
-│   └── compute/
-│       ├── bastion
-│       │   ├── main.tf
-│       │   └── variables.tf
-│       └── was
-│           ├── main.tf
-│           └── variables.tf
+├── README.md
+├── assets
+│   └── infra_architecture.png
+├── commitlint.config.js
+├── configurations
+│   └── provider.tf
+├── docker-compose.yml
+├── lambda_functions
+│   └── image-resizer
+│       ├── chatroom.zip
+│       ├── chatroom_v2.zip
+│       ├── feed.zip
+│       ├── feed_v2.zip
+│       ├── profile.zip
+│       ├── profile_v2.zip
+│       └── test.zip
+├── lambda_layers
+│   └── image_resizer.zip
 ├── main.tf
+├── modules
+│   ├── amplify_web
+│   │   ├── main.tf
+│   │   └── variables.tf
+│   ├── compute
+│   │   ├── main.tf
+│   │   └── variables.tf
+│   ├── lambda
+│   │   ├── main.tf
+│   │   └── variables.tf
+│   ├── network
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── rds
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   └── storage
+│       ├── main.tf
+│       ├── outputs.tf
+│       └── variables.tf
+├── package-lock.json
+├── package.json
+├── pennyway-dev.ovpn
+├── pennyway.pem
+├── terraform.tfstate
+├── terraform.tfstate.1724495112.backup
+├── terraform.tfstate.backup
 ├── terraform.tfvars
-└── configurations/
-    └── provider.tf
+└── variables.tf
 ```
 
 - `Modules Directory`
@@ -48,6 +82,12 @@ secret_key = ""
 cidr_block = ""
 remote_ip = ""
 keypair = ""
+
+domain = ""
+github_access_token = ""
+
+db_username = ""
+db_password = ""
 ```
 
 - `access_key`: AWS 계정의 액세스 키 ID
@@ -55,3 +95,7 @@ keypair = ""
 - `cidr_block`: Private Network 환경을 구축하기 위해 사용되는 IP 주소 범위
 - `remote_ip`: bastion 서버에 접속하기 위해 사용되는 IP 주소
 - `keypair`: AWS EC2 인스턴스에 SSH 접속을 위해 사용되는 키 쌍
+- `domain`: AWS Route53을 통해 관리할 서비스 도메인
+- `github_access_token`: AWS Amplify를 통한 정적 웹사이트 호스팅을 위한 GitHub Repository 액세스 키
+- `db_username`: AWS RDS 접속을 위한 DB username
+- `db_password`: AWS RDS 접속을 위한 DB password

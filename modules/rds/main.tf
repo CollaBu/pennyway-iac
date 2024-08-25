@@ -7,7 +7,17 @@ resource "aws_security_group" "rds_sg" {
   }
 }
 
-# bastion 서버에서 net 서브넷에서 오는 접근 허용
+# bastion에서 rds로 접근 허용
+resource "aws_security_group_rule" "bastion_inbound_ssh" {
+  type              = "ingress"
+  from_port         = 3306
+  to_port           = 3306
+  protocol          = "tcp"
+  cidr_blocks       = [var.bastion_cidr]
+  security_group_id = aws_security_group.rds_sg.id
+}
+
+# app 서브넷에서 오는 접근 허용
 resource "aws_security_group_rule" "app_inbound_ssh" {
   type              = "ingress"
   from_port         = 3306
@@ -17,7 +27,7 @@ resource "aws_security_group_rule" "app_inbound_ssh" {
   security_group_id = aws_security_group.rds_sg.id
 }
 
-# rds 서버에서 app 서브넷에서 오는 접근 허용
+# app 서브넷으로 나가는 트래픽 허용
 resource "aws_security_group_rule" "data_outbound" {
   type              = "egress"
   from_port         = 0
@@ -61,3 +71,4 @@ resource "aws_db_instance" "rds" {
     Name = "${var.region_name}-${var.terraform_name}-${var.env_name}-rds"
   }
 }
+

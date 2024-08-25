@@ -35,12 +35,6 @@ module "was" {
   bastion_cidr   = module.network.bastion_cidr
 }
 
-# serverless web 인스턴스 구축
-module "amplify_web" {
-  source              = "./modules/amplify_web"
-  github_access_token = var.github_access_token
-}
-
 # S3 버킷 구축
 module "storage" {
   source          = "./modules/storage"
@@ -70,4 +64,5 @@ module "rds" {
   app_cidr_block = module.network.app_cidr_block
   subnet_id_1    = module.network.data_subnet_id_1
   subnet_id_2    = module.network.data_subnet_id_2
+  bastion_cidr   = module.network.bastion_cidr
 }
