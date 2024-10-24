@@ -75,8 +75,8 @@ resource "aws_db_instance" "rds" {
 # rds 파라미터 정의
 resource "aws_db_parameter_group" "rds_parameter" {
   name = "rds-pg-${var.env_name}"
-  family = "mysql8.0.35"
-  description = "MySQL 8.0.35 Custom Parameter Group"
+  family = "mysql8.0"
+  description = "MySQL 8.0 Custom Parameter Group"
 
   parameter {
     name = "innodb_ft_min_token_size"
