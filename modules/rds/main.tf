@@ -53,14 +53,14 @@ resource "aws_db_instance" "rds" {
   availability_zone     = "ap-northeast-2a"
   identifier            = "${var.terraform_name}-${var.env_name}-rdb"
   engine                = "mysql"
-  engine_version        = "8.0"
+  engine_version        = "8.0.35"
   instance_class        = "db.t3.micro"
   allocated_storage     = 20
   max_allocated_storage = 100
   storage_type          = "gp2"
   username              = var.db_username
   password              = var.db_password
-  parameter_group_name  = "default.mysql8.0"
+  parameter_group_name  = aws_db_parameter_group.rds_parameter.name
   skip_final_snapshot   = true
   publicly_accessible   = true
 
@@ -72,3 +72,20 @@ resource "aws_db_instance" "rds" {
   }
 }
 
+# rds 파라미터 정의
+resource "aws_db_parameter_group" "rds_parameter" {
+  name = "rds-pg-${var.env_name}"
+  family = "mysql8.0"
+  description = "MySQL 8.0 Custom Parameter Group"
+
+  parameter {
+    name = "innodb_ft_min_token_size"
+    value = "2"
+    apply_method = "pending-reboot"
+  }
+
+  parameter {
+    name  = "character_set_server"
+    value = "utf8mb4"
+  }
+}
