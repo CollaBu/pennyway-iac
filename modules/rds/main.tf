@@ -88,9 +88,4 @@ resource "aws_db_parameter_group" "rds_parameter" {
     name  = "character_set_server"
     value = "utf8mb4"
   }
-
-  tags = {
-    Environment = var.env_name
-    Terraform   = "true"
-  }
 }
